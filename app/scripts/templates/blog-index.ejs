@@ -1,0 +1,51 @@
+<a style="margin:10px 0px;"
+   class="btn btn-large btn-primary"
+   href="#blog/new">
+  <i class="fa fa-plus"></i>
+  Create New Data
+</a>
+<!--<a data-toggle="collapse"-->
+   <!--data-target="#collapseExample2"-->
+   <!--aria-expanded="false"-->
+   <!--aria-controls="collapseExample2"-->
+   <!--style="margin:10px 0px;"-->
+   <!--class="btn btn-large btn-success"-->
+   <!--href="#blog/index">-->
+  <!--<i class="fa fa-list"></i>-->
+  <!--View Data (Double Click)-->
+<!--</a>-->
+
+<div">
+  <% if (_.isEmpty(blogs)){ %>
+  <div class="alert alert-warning">
+    <p>There are currently no courses. Try creating some.</p>
+  </div>
+  <% } %>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Done</th>
+      <th width="140">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% _.each(blogs, function (blog) { %>
+    <tr>
+      <td><%= blog.id %></td>
+      <td><%= blog.title %></td>
+      <td><%= blog.description %></td>
+      <td><%= blog.done %></td>
+      <td class="text-center">
+        <a class="btn btn-xs btn-info" href="#blog/<%= blog.id %>/edit"><i class="fa fa-pencil"></i> Edit</a>
+        <a class="btn btn-xs btn-danger" href="#blog/<%= blog.id %>/delete"><i class="fa fa-trash"></i> Delete</a>
+      </td>
+    </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</div>
+

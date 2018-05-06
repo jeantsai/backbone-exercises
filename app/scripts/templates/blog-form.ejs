@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="alert alert-danger fade in" style="display:none;"></div>
+    <form>
+      <h2><%= name %></h2>
+      <% if (typeof id !== "undefined") { %>
+      <div class="form-group">
+        <label>ID:</label>
+        <input type="text" class="form-control" name="id" value="<%= id %>" readonly />
+      </div>
+      <% } %>
+      <div class="form-group">
+        <label>Title:</label>
+        <input type="text" class="form-control" name="title" value="<%= title %>" />
+      </div>
+      <div class="form-group">
+        <label>Description:</label>
+        <input type="text" class="form-control" name="description" value="<%= description %>" />
+      </div>
+      <div class="form-group">
+        <label>Done:</label>
+        <input type="checkbox" class="form-control" name="done" value="<%= done %>" />
+      </div>
+      <button class="save btn btn-large btn-info" type="submit">Save</button>
+      <a href="#blog/index" class="btn btn-large btn-default">Cancel</a>
+    </form>
+  </div>
+</div>

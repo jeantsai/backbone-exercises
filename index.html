@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+Redirect to 'dist/index.html' ...
+
+<script>
+  console.log(window.location)
+  window.location = window.location.origin + window.location.pathname.replace('index', 'dist/index');
+</script>
+
+</body>
+</html>
