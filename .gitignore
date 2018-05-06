@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# IntelliJ IDEA meta data
+.idea
+
+# Temp Foler
+.tmp

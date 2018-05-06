@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    consul:
+        image: smebberson/alpine-consul
+        environment:
+            - CONSUL_BOOTSTRAP_DEBUG=true
+            - CONSUL_BOOTSTRAP_EXPECT=1
+    consului:
+        image: smebberson/alpine-consul-ui
+        environment:
+            - CONSUL_BOOTSTRAP_DEBUG=true
+        ports:
+            - 8500:8500
+    cache:
+        image: smebberson/alpine-consul-redis
+        environment:
+            - CONSUL_BOOTSTRAP_DEBUG=true
+    backend:
+        image: ce-server
+        ports:
+            - 5000:5000
+        volumes:
+            - .:/app
+        depends_on:
+            - consului
+        entrypoint:
+            - python
+            - /app/dns-resolver.py
