@@ -19,6 +19,7 @@ Exercises.Views = Exercises.Views || {};
     events: {},
 
     initialize: function () {
+      this.listenTo(this.collection, 'change', this.render);
     },
 
     render: function () {
