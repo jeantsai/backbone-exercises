@@ -26,4 +26,13 @@ services:
             - consului
         entrypoint:
             - python
-            - /app/dns-resolver.py
+            - /app/backend.py
+    dnsresolver:
+        image: ce-server
+        volumes:
+            - .:/app
+        depends_on:
+            - consului
+        entrypoint:
+            - python
+            - /app/dns_resolver.py

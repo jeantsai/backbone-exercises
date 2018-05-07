@@ -1,19 +1,42 @@
+import sys
+import logging
 from flask import Flask, jsonify, abort, make_response, request, url_for, g
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
 from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
+from flask_redis import FlaskRedis
+from dns_resolver import get_redis_address
+
+
+# Setup logging facility
+console = logging.StreamHandler(sys.stdout)
+console.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(name)s %(message)s'))
+log = logging.getLogger('')
+log.addHandler(console)
+log.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Fetch the address of service redis from Consul
+(redis_ip, redis_port) = get_redis_address()
+redis_url = "redis://%s:%s/0" % (redis_ip, redis_port)
+logger.info('Got the address of service redis as: %s' % redis_url)
 
 app = Flask(__name__)
 CORS(app)
-auth = HTTPBasicAuth()    
+auth = HTTPBasicAuth()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+
+app.config['REDIS_URL'] = redis_url
+
+redis_store = FlaskRedis(app)
+API_USAGE_KEY = 'visit:api:total'
 
 courses = [
     {
         'id': 1,
-           'title': u'Software Architecture',
+        'title': u'Software Architecture',
         'description': u'Software architecture refers to the high level structures of a software system, the discipline of creating such structures, and the documentation of these structures.',
         'done': False
     },
@@ -28,7 +51,13 @@ courses = [
 # Get API usage
 @app.route('/ce/api/v1.0/usages', methods=['GET'])
 def get_usage():
-    return jsonify({"count": 123456})
+    count = redis_store.get(API_USAGE_KEY)
+    # count = 12345
+    return jsonify({"count": str(count, encoding='utf-8')})
+
+@app.before_request
+def before_request():
+    redis_store.incr(API_USAGE_KEY)
 
 
 # GET one specific course
@@ -56,7 +85,7 @@ def create_course():
         'title': request.json['title'],
         'description': request.json.get('description', ""),
         'done': False
-    }    
+    }
     courses.append(course)
     return jsonify( course ), 201
 
@@ -103,7 +132,7 @@ def make_client_course(course):
 # @app.route('/ce/api/v1.0/courses',methods=['GET'])
 # def get_courses():
 #     return jsonify({'courses': list(map(make_client_course, courses))})
- 
+
 # strengthen security: login session
 
 # @auth.get_password
@@ -174,5 +203,7 @@ def verify_password(username, password):
     g.user = user
     return True
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Run the main function of this module
+    app.run(host='0.0.0.0', port=5000, debug=True)
