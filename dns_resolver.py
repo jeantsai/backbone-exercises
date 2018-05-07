@@ -2,6 +2,7 @@ import sys
 import logging
 from dns import resolver
 import socket
+import time
 
 
 def lookup_consul_ip():
@@ -30,7 +31,17 @@ def lookup_redis_address(consul_server_ip):
 
 
 def get_redis_address():
-    return lookup_redis_address(lookup_consul_ip())
+    consul_ip = lookup_consul_ip()
+    count = 18
+    while count > 0:
+        try:
+            time.sleep(10)
+            (ip, port) = lookup_redis_address(consul_ip)
+            return ip, port
+        except:
+            count -= 1
+            if count == 0:
+                raise
 
 
 if __name__ == '__main__':

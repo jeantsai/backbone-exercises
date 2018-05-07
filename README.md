@@ -14,12 +14,11 @@ Also pip has already been packaged inside Python since latest version, it is bet
 #### Setup dependencies
 Run the following command to install all dependencies:
 ```
-pip install flask
-pip install flask-httpauth
-pip install flask-cors
-pip install flask-sqlalchemy
-pip install passlib
+pip install -r requirements.txt
 ```
+
+> IMPORTANT: Don't forget update requirements.txt once we add/remove python dependencies such as Flask, SQLAlchemy, etc.
+
 
 #### Start the backend
 Run the following command to start the backend server:
@@ -37,7 +36,7 @@ In case of changing something in the source codes, you can rebuild the html file
 2. From the project folder run the following commands.
     ```
     yarn install
-    grunt
+    grunt build
     ```
 
 
@@ -46,6 +45,24 @@ In case of changing something in the source codes, you can rebuild the html file
 
 #### Install Docker
 Reference to [official site](https://www.docker.com/community-edition).
+
+#### Start/stop all containers to demo
+```
+# start
+docker-compose -p ce up -d --scale consul=3
+
+# stop
+docker-compose -p ce down
+
+# List
+docker-compose -p ce ps
+```
+
+#### Do not start Backend until Consul server is ready
+Refer to [Control startup order in Compose](https://docs.docker.com/compose/startup-order/), 
+choose the [wait-for](https://github.com/Eficode/wait-for) as the solution.
+
+
 
 #### Start a simplest web server from a official python container
 ```
@@ -66,10 +83,8 @@ docker build -t ce-server .
 Choose Consul for simplicity by leverage Docker official Consul image.
 
 ```
-docker run -d --name=consul -p 8500:8500 -p 8400:8400 gliderlabs/consul-server -bootstrap -client 0.0.0.0 -ui
-# docker run -d --name=consul -p 8500:8500 -p 8400:8400 consul agent -bootstrap -client 0.0.0.0 -ui
 docker run --rm --name consul -p 8500:8500 -p 8400:8400 consul agent -server -bootstrap -client 0.0.0.0 -ui
-
+```
 
 # run as a client
 docker run --rm --name consul1 --link consul consul agent -bind=0.0.0.0 -retry-join=consul

@@ -12,12 +12,13 @@ services:
             - CONSUL_BOOTSTRAP_DEBUG=true
         ports:
             - 8500:8500
-    cache:
+    redis:
         image: smebberson/alpine-consul-redis
         environment:
             - CONSUL_BOOTSTRAP_DEBUG=true
     backend:
-        image: ce-server
+        build: .
+        image: backend:local
         ports:
             - 5000:5000
         volumes:
@@ -25,8 +26,11 @@ services:
         depends_on:
             - consului
         entrypoint:
-            - python
-            - /app/backend.py
+            - sh
+            - -c
+            - './wait-for consului:8600 -- python backend.py'
+#            - python
+#            - /app/backend.py
     dnsresolver:
         image: ce-server
         volumes:
