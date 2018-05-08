@@ -18,7 +18,16 @@ Exercises.Views = Exercises.Views || {};
     events: {},
 
     initialize: function () {
+      var usagesModel = this.model;
       this.listenTo(this.model, 'change', this.render);
+      $(document).on('click', '[data-target="#myApiUsage"]', function(e) {
+        usagesModel.fetch({
+          ajaxSync: true,
+          success: function() {
+            console.info("Fetched usages for showing in a modal window");
+          }
+        });
+      });
     },
 
     render: function () {

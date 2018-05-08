@@ -49,9 +49,9 @@ Exercises.Views = Exercises.Views || {};
 
       // update our model with values from the form
       this.model.set({
-        title: this.$el.find('input[name=title]').val(),
-        description: this.$el.find('input[name=description]').val(),
-        done: this.$el.find('input[name=done]').is(':checked')
+        title: this.$('input[name=title]').val(),
+        description: this.$('input[name=description]').val(),
+        done: this.$('input[name=done]').is(':checked')
       });
 
       if (this.model.isValid()) {
@@ -99,9 +99,9 @@ Exercises.Views = Exercises.Views || {};
       // update our model with values from the form
       this.model.set({
         // id: this.$el.find('input[name=id]').val(),
-        title: this.$el.find('input[name=title]').val(),
-        description: this.$el.find('input[name=description]').val(),
-        done: this.$el.find('input[name=done]').is(':checked')
+        title: this.$('input[name=title]').val(),
+        description: this.$('input[name=description]').val(),
+        done: this.$('input[name=done]').is(':checked')
       });
 
       if (this.model.isValid()) {

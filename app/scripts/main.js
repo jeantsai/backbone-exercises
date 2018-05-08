@@ -15,6 +15,7 @@ window.Exercises = {
   }
 };
 
+
 $(document).ready(function () {
   'use strict';
   console.info('Starting Course Evaluation SPA ... ');
