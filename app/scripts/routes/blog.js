@@ -7,7 +7,6 @@ Exercises.Routers = Exercises.Routers || {};
 
   Exercises.Routers.Blog = Backbone.Router.extend({
     routes: {
-      "/": "index",
       "blog/new": "create",
       "blog/index": "index",
       "blog/:id/edit": "edit",
@@ -21,26 +20,26 @@ Exercises.Routers = Exercises.Routers || {};
 
     initialize: function () {
       this.collection = new Exercises.Collections.Blog();
-      var router = this;
+      this.blogIndexView = new Exercises.Views.Blog({collection: this.collection});
+      console.log('Fetching courses ...');
       this.collection.fetch({
         ajaxSync: true,
         success: function() {
-          console.log('Courses has been fetched successfully.')
-          router.index();
+          console.log('Courses has been fetched successfully.');
         }
       });
       Exercises.helpers.debug(this.collection);
 
       this.usages = new Exercises.Models.Usage;
+      this.usagesView = new Exercises.Views.Usage({model: this.usages, el: this.$usagesContainer});
+      console.log('Fetching usages ...');
       this.usages.fetch({
         ajaxSync: true,
         success: function () {
-          router.showUsages();
+          console.log('Usage has been fetched successfully.');
+          // router.showUsages();
         }
       });
-
-      // start backbone watching url changes
-      Backbone.history.start();
     },
 
     create: function () {
@@ -49,13 +48,12 @@ Exercises.Routers = Exercises.Routers || {};
         model: new Exercises.Models.Blog()
       });
       this.$container.html(view.render().el);
-      // $('.myid').val(_.random(0, 10000));
     },
 
     delete: function (id) {
       var blog = this.collection.get(id);
       blog.destroy();
-      Backbone.history.navigate("blog/index", {trigger: true});
+      this.index();
     },
 
     edit: function (id) {
@@ -64,13 +62,11 @@ Exercises.Routers = Exercises.Routers || {};
     },
 
     index: function () {
-      var view = new Exercises.Views.Blog({collection: this.collection});
-      this.$container.html(view.render().el);
+      this.blogIndexView.render();
     },
 
     showUsages: function() {
-      var view = new Exercises.Views.Usage({model: this.usages});
-      this.$usagesContainer.html(view.render().el);
+      this.$usagesContainer.html(this.usagesView.render().el);
     }
   });
 

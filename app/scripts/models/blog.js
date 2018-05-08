@@ -17,7 +17,7 @@ Exercises.Models = Exercises.Models || {};
     },
 
     validate: function(attrs, options) {
-    },
+    }
 
     // parse: function(response, options)  {
     //   return response;
