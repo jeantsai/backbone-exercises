@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
 from flask_redis import FlaskRedis
 from dns_resolver import get_redis_address
+from kafka import KafkaProducer
 
 
 # Setup logging facility
@@ -48,16 +49,21 @@ courses = [
     }
 ]
 
+producer = KafkaProducer(bootstrap_servers='kafka:29092')
+topic = 'api-visits'
+
+# Record API visit
+@app.before_request
+def before_request():
+    producer.send(topic, bytes(request.path, encoding='utf-8'))
+    # redis_store.incr(API_USAGE_KEY)
+
 # Get API usage
 @app.route('/ce/api/v1.0/usages', methods=['GET'])
 def get_usage():
     count = redis_store.get(API_USAGE_KEY)
     # count = 12345
     return jsonify({"count": str(count, encoding='utf-8')})
-
-@app.before_request
-def before_request():
-    redis_store.incr(API_USAGE_KEY)
 
 
 # GET one specific course

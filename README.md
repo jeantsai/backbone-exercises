@@ -63,6 +63,10 @@ Refer to [Control startup order in Compose](https://docs.docker.com/compose/star
 choose the [wait-for](https://github.com/Eficode/wait-for) as the solution.
 
 
+#### Use Message Queue to simulat CQRS - Command Query Responsibility Segeration
+Instead of recording API visits into Redis directly from the Backend server, send a visiting event to Kafka.
+A new microservice - consumer.py - will be listening to those events and incr API usages in Redis.
+
 
 #### Start a simplest web server from a official python container
 ```
@@ -76,7 +80,7 @@ Similar to this, we can split backend.py into multiple python programs. then sta
 We need a custom docker image to run our own python app since they require flask and many other python libraries.
 Assume we want the name of the image to be "ce-server", then from our project root directory run the following docker command to build our image.
 ```
-docker build -t ce-server .
+docker build -t consul-python .
 ```
 
 #### Service Registry Service

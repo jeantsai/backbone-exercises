@@ -5,7 +5,7 @@ services:
         image: smebberson/alpine-consul
         environment:
             - CONSUL_BOOTSTRAP_DEBUG=true
-            - CONSUL_BOOTSTRAP_EXPECT=1
+            - CONSUL_BOOTSTRAP_EXPECT=3
     consului:
         image: smebberson/alpine-consul-ui
         environment:
@@ -16,9 +16,31 @@ services:
         image: smebberson/alpine-consul-redis
         environment:
             - CONSUL_BOOTSTRAP_DEBUG=true
+    zookeeper:
+        image: confluentinc/cp-zookeeper:latest
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 32181
+            ZOOKEEPER_TICK_TIME: 2000
+        extra_hosts:
+            - "moby:127.0.0.1"
+    kafka:
+        image: confluentinc/cp-kafka:latest
+        depends_on:
+            - zookeeper
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        extra_hosts:
+            - "moby:127.0.0.1"
+        links:
+            - zookeeper
+        ports:
+            - 29092:29092
     backend:
         build: .
-        image: backend:local
+        image: consul-python
         ports:
             - 5000:5000
         volumes:
@@ -28,15 +50,14 @@ services:
         entrypoint:
             - sh
             - -c
-            - './wait-for consului:8600 -- python backend.py'
+            - './wait-for consului:8600 -- ./wait-for kafka:29092 -- python backend.py'
 #            - python
 #            - /app/backend.py
-    dnsresolver:
-        image: ce-server
+    consumer:
+        image: consul-python
         volumes:
             - .:/app
-        depends_on:
-            - consului
         entrypoint:
-            - python
-            - /app/dns_resolver.py
+            - sh
+        stdin_open: true
+        tty: true
