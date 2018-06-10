@@ -67,6 +67,7 @@ choose the [wait-for](https://github.com/Eficode/wait-for) as the solution.
 Instead of recording API visits into Redis directly from the Backend server, send a visiting event to Kafka.
 A new microservice - consumer.py - will be listening to those events and incr API usages in Redis.
 
+someone provides a python lib for access kafka https://github.com/dpkp/kafka-python
 
 #### Start a simplest web server from a official python container
 ```

@@ -47,17 +47,23 @@ services:
             - .:/app
         depends_on:
             - consului
+            - kafka
         entrypoint:
             - sh
             - -c
-            - './wait-for consului:8600 -- ./wait-for kafka:29092 -- python backend.py'
+            - './wait-for consului:8600 -t 60 -- ./wait-for kafka:29092 -t 60 -- python backend.py'
 #            - python
 #            - /app/backend.py
     consumer:
         image: consul-python
         volumes:
             - .:/app
+        depends_on:
+            - consului
+            - kafka
         entrypoint:
             - sh
+            - -c
+            - './wait-for consului:8600 -t 60 -- ./wait-for kafka:29092 -t 60 -- python consumer.py'
         stdin_open: true
         tty: true
